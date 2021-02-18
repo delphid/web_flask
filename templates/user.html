@@ -1,0 +1,11 @@
+<html>
+    <head>
+        <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+    </head>
+    <body>
+        <form action="{{ url_for('user_page') }}" method="get">
+            <p>Hi {{ g.user_name }}, you've successfully logged in</p>
+            <p><input type="submit" name="action" value="return to login page"></p>
+        </form>
+    </body>
+</html>
