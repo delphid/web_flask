@@ -21,6 +21,8 @@ def user_page(name):
 @app.route('/')
 @app.route('/login/', methods=['POST', 'GET'])
 def login_page():
+    a1 = module1.A()
+    g.some_info = a1.a
     if request.method == 'POST':
         user = request.form['the_name_box']
         if request.form['action'] == 'get logged in':
@@ -34,4 +36,4 @@ def login_page():
             return redirect(url_for('user_page', name=user))
         return render_template('login.html')
 
-app.run(debug=True, port=3000)
+app.run(host='localhost', debug=True, port=3000)
