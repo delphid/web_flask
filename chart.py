@@ -30,7 +30,7 @@ def line_plot(x, ys):
 def layout(*args):
     page = Page(layout=Page.SimplePageLayout)
     page.add(*args)
-    page.render('./templates/render.html')
+    page.render('render.html')
 
 
 if __name__ == '__main__':

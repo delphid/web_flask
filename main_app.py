@@ -1,11 +1,15 @@
 import logging
 
 from flask import Flask, redirect, url_for, request, render_template, g
+from jinja2 import Markup, Environment, FileSystemLoader
+from pyecharts.globals import CurrentConfig
 
 from loan import Loan
 
 
-app = Flask(__name__)
+CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader('./templates/pyecharts_templates'))
+
+app = Flask(__name__, static_folder='static')
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -28,7 +32,7 @@ def plot():
         yearly_interest_rate = yearly_interest_rate,
         year_limit = year_limit)
     line_plot = loan.plot()
-    return render_template('render.html')
+    return Markup(line_plot.render_embed())
 
 @app.route('/')
 @app.route('/login/', methods=['POST', 'GET'])

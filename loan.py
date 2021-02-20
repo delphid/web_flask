@@ -70,14 +70,14 @@ class Loan:
         self.remain = self.loan_amount
         principal = round(self.loan_amount / self.p_num)
         last_principal = self.loan_amount - (self.p_num - 1) * principal
-        principals = [yuan(principal) for i in range(self.p_num)]
-        principals[-1] = yuan(last_principal)
-        self.const_p_principals = principals
+        principals = [principal for i in range(self.p_num)]
+        principals[-1] = last_principal
         interests = []
         for principal in principals:
             interest = self.remain * self.ir
             interests.append(yuan(interest))
             self.remain -= principal
+        self.const_p_principals = [yuan(principal) for principal in principals]
         self.const_p_interests = interests
 
     def calc_p1_principal_trial_range(self):
