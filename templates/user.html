@@ -7,5 +7,24 @@
             <p>Hi {{ g.user_name }}, you've successfully logged in</p>
             <p><input type="submit" name="action" value="return to login page"></p>
         </form>
+        <form action="{{ url_for('plot') }}" method="post">
+            <p>calculate input:</p>
+            <p>
+                <label for="loan_amount_yuan">loan amount</label>
+                <input type="text" name="loan_amount_yuan">
+                <label for="loan_amount_yuan">yuan</label>
+            </p>
+            <p>
+                <label for="yearly_interest_rate">yearly interest rate</label>
+                <input type="text" name="yearly_interest_rate">
+                <label for="yearly_interest_rate">%</label>
+            </p>
+            <p>
+                <label for="year_limit">year limit</label>
+                <input type="text" name="year_limit">
+                <label for="year_limit">years</label>
+            </p>
+            <p><input type="submit" name="action" value="calculate"></p>
+        </form>
     </body>
 </html>

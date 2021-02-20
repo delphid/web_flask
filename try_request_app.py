@@ -2,7 +2,7 @@ import logging
 
 from flask import Flask, redirect, url_for, request, render_template, g
 
-import module1
+from loan import Loan
 
 
 app = Flask(__name__)
@@ -18,11 +18,21 @@ def user_page(name):
         return redirect(url_for('login_page'))
     return render_template('user.html')
 
+@app.route('/plot/', methods=['POST'])
+def plot():
+    loan_amount_yuan = int(request.form['loan_amount_yuan'])
+    yearly_interest_rate = float(request.form['yearly_interest_rate']) / 100
+    year_limit = int(request.form['year_limit'])
+    loan = Loan(
+        loan_amount_yuan = loan_amount_yuan,
+        yearly_interest_rate = yearly_interest_rate,
+        year_limit = year_limit)
+    line_plot = loan.plot()
+    return render_template('render.html')
+
 @app.route('/')
 @app.route('/login/', methods=['POST', 'GET'])
 def login_page():
-    a1 = module1.A()
-    g.some_info = a1.a
     if request.method == 'POST':
         user = request.form['the_name_box']
         if request.form['action'] == 'get logged in':
