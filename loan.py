@@ -46,7 +46,7 @@ class Loan:
 
     def const_pi(self):
         # constant-principal-interest mode
-        # pi = self.calc_principal_interest()
+        #pi = self.calc_principal_interest()
         pi = self.practice_principal_interest
         self.principal_interest = pi
         self.remain = self.loan_amount
@@ -82,17 +82,12 @@ class Loan:
 
     def calc_p1_principal_trial_range(self):
         p1_principal = self.loan_amount / self.p_num
-        for i in range(self.p_num):
-            p1_principal =\
-                self.loan_amount / self.p_num * (
-                    (self.p_num - i) / self.p_num
-                )
-            actual_p_num = self.actual_p_num(p1_principal)
-            if actual_p_num == self.p_num - 1:
-                range_max = p1_principal
-            if actual_p_num == self.p_num:
-                range_min = p1_principal
-                break
+        range_max = find_x_for_value(
+            leftx=0, rightx=self.loan_amount / self.p_num,
+            value=self.p_num - 1, func=self.actual_p_num)
+        range_min = find_x_for_value(
+            leftx=0, rightx=self.loan_amount / self.p_num,
+            value=self.p_num, func=self.actual_p_num)
         return [range_min, range_max]
 
     def calc_principal_interest(self):
@@ -125,6 +120,7 @@ class Loan:
         periods = [p for p in range(1, self.p_num + 1)]
         self.const_pi()
         self.const_p()
+        print(self.const_pi_principals)
         line_result = line_plot(
             periods, [
                 [self.const_pi_principals, 'const pi principals'],
@@ -149,6 +145,18 @@ def find_boundary(leftx, rightx, lefty, righty, func):
             rightx = x
 
 
+def find_x_for_value(leftx, rightx, value, func):
+    while True:
+        x = (leftx + rightx) / 2
+        if func(x) > value:
+            leftx = x
+        elif func(x) < value:
+            rightx = x
+        elif func(x) == value:
+            return x
+            break
+
+
 def yuan(in_cent):
     out = round(in_cent / 100, 2)
     return out
@@ -156,8 +164,8 @@ def yuan(in_cent):
 
 if __name__ == '__main__':
     loan = Loan(
-        loan_amount_yuan = 900000,
-        yearly_interest_rate = 0.04275002016749706,
-        year_limit = 5)
+        loan_amount_yuan = 100000,
+        yearly_interest_rate = 0.2,
+        year_limit = 50)
     print(loan.practice_principal_interest)
     loan.plot()

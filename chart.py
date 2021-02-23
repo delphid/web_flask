@@ -25,6 +25,14 @@ def line_plot(x, ys):
     for y_info in ys:
         line.add_yaxis(series_name=y_info[1], y_axis=y_info[0])
     line.set_series_opts(label_opts=opts.LabelOpts(is_show=False))
+    line.set_global_opts(
+        datazoom_opts=opts.DataZoomOpts(type_='slider'),
+        xaxis_opts=opts.AxisOpts(
+            interval=12,
+            min_interval=12,
+            max_interval=12
+        )
+    )
     return line
 
 def layout(*args):
