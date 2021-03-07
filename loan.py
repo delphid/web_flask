@@ -123,10 +123,10 @@ class Loan:
         print(self.const_pi_principals)
         line_result = line_plot(
             periods, [
-                [self.const_pi_principals, 'const pi principals'],
-                [self.const_pi_interests, 'const pi interests'],
-                [self.const_p_principals, 'const p principals'],
-                [self.const_p_interests, 'const p interests']
+                [self.const_pi_principals, '等额本息还款 - 本金曲线'],
+                [self.const_pi_interests, '等额本息还款 - 利息曲线'],
+                [self.const_p_principals, '等额本金还款 - 本金曲线'],
+                [self.const_p_interests, '等额本金还款 - 利息曲线']
             ]
         )
         layout(line_result)
