@@ -28,6 +28,11 @@ class Loan:
         return self.year_limit * 12
 
     @property
+    def p1_interest(self):
+        # interest of the 1st period
+        return self.loan_amount * self.ir
+
+    @property
     def practice_principal_interest(self):
         # in industrial practice, in const principal-interest mode,
         # this calculates the period payment
@@ -41,6 +46,7 @@ class Loan:
 
     def const_pi(self):
         # constant-principal-interest mode
+        #pi = self.calc_principal_interest()
         pi = self.practice_principal_interest
         self.principal_interest = pi
         self.remain = self.loan_amount
@@ -58,6 +64,7 @@ class Loan:
         self.const_pi_principals = principals
         self.const_pi_interests = interests
 
+
     def const_p(self):
         # constant-principal mode
         self.remain = self.loan_amount
@@ -72,6 +79,42 @@ class Loan:
             self.remain -= principal
         self.const_p_principals = [yuan(principal) for principal in principals]
         self.const_p_interests = interests
+
+    def calc_p1_principal_trial_range(self):
+        p1_principal = self.loan_amount / self.p_num
+        range_max = find_x_for_value(
+            leftx=0, rightx=self.loan_amount / self.p_num,
+            value=self.p_num - 1, func=self.actual_p_num)
+        range_min = find_x_for_value(
+            leftx=0, rightx=self.loan_amount / self.p_num,
+            value=self.p_num, func=self.actual_p_num)
+        return [range_min, range_max]
+
+    def calc_principal_interest(self):
+        self.p1_principal_trial_range = self.calc_p1_principal_trial_range()
+        p1p_min = self.p1_principal_trial_range[0]
+        p1p_max = self.p1_principal_trial_range[1]
+        boundary_p1ps = find_boundary(
+            leftx=p1p_min,
+            rightx=p1p_max,
+            lefty=self.p_num,
+            righty=self.p_num - 1,
+            func=self.actual_p_num)
+        principal_interest = round(self.p1_interest + boundary_p1ps[0])
+        return round(principal_interest)
+
+    def actual_p_num(self, p1_principal):
+        principal_interest = p1_principal + self.p1_interest
+        self.remain = self.loan_amount - p1_principal
+        p_num = 1
+        while True:
+            interest = self.remain * self.ir
+            principal = principal_interest - interest
+            if self.remain - principal <= 0:
+                break
+            self.remain -= principal
+            p_num += 1
+        return p_num
 
     def plot(self):
         periods = [p for p in range(1, self.p_num + 1)]
@@ -88,6 +131,30 @@ class Loan:
         )
         layout(line_result)
         return line_result
+
+
+def find_boundary(leftx, rightx, lefty, righty, func):
+    while True:
+        if rightx - leftx <= 0.01:
+            return [leftx, rightx]
+            break
+        x = (leftx + rightx) / 2
+        if func(x) == lefty:
+            leftx = x
+        elif func(x) == righty:
+            rightx = x
+
+
+def find_x_for_value(leftx, rightx, value, func):
+    while True:
+        x = (leftx + rightx) / 2
+        if func(x) > value:
+            leftx = x
+        elif func(x) < value:
+            rightx = x
+        elif func(x) == value:
+            return x
+            break
 
 
 def yuan(in_cent):
