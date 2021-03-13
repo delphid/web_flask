@@ -1,5 +1,6 @@
 <html>
     <head>
+        <meta charset="UTF-8">
         <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
     </head>
     <body>
@@ -11,20 +12,21 @@
             <p>calculate input:</p>
             <p>
                 <label for="loan_amount_yuan">loan amount</label>
-                <input type="text" name="loan_amount_yuan">
+                <input type="text" name="loan_amount_yuan" value={{ g.calc_input['loan_amount_yuan'] }}>
                 <label for="loan_amount_yuan">yuan</label>
             </p>
             <p>
                 <label for="yearly_interest_rate">yearly interest rate</label>
-                <input type="text" name="yearly_interest_rate">
+                <input type="text" name="yearly_interest_rate" value={{ g.calc_input['yearly_interest_rate'] }}>
                 <label for="yearly_interest_rate">%</label>
             </p>
             <p>
                 <label for="year_limit">year limit</label>
-                <input type="text" name="year_limit">
+                <input type="text" name="year_limit" value={{ g.calc_input['year_limit'] }}>
                 <label for="year_limit">years</label>
             </p>
             <p><input type="submit" name="action" value="calculate"></p>
         </form>
+        <p>{{ g.chart }}</p>
     </body>
 </html>

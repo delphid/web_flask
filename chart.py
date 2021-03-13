@@ -20,9 +20,9 @@ def bar_plot1(x, y, name='some data'):
     )
     return bar
 
-def line_plot(x, ys):
+def line_plot(x, y_values, y_names):
     line = Line().add_xaxis(x)
-    for y_info in ys:
+    for y_info in zip(y_values, y_names):
         line.add_yaxis(series_name=y_info[1], y_axis=y_info[0])
     line.set_series_opts(label_opts=opts.LabelOpts(is_show=False))
     line.set_global_opts(

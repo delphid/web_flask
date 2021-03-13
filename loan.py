@@ -1,5 +1,7 @@
 from functools import cached_property
 
+from pydantic import BaseModel
+
 from chart import line_plot, layout
 
 
@@ -48,12 +50,12 @@ class Loan:
         interests = []
         for period in range(1, self.p_num + 1):
             interest = round(self.remain * self.ir)
-            interests.append(yuan(interest))
+            interests.append(interest)
             if period == self.p_num:
                 principal = self.remain
             else:
                 principal = pi - interest
-            principals.append(yuan(principal))
+            principals.append(principal)
             self.remain -= principal
         self.const_pi_principals = principals
         self.const_pi_interests = interests
@@ -68,22 +70,43 @@ class Loan:
         interests = []
         for principal in principals:
             interest = self.remain * self.ir
-            interests.append(yuan(interest))
+            interests.append(interest)
             self.remain -= principal
-        self.const_p_principals = [yuan(principal) for principal in principals]
+        self.const_p_principals = principals
         self.const_p_interests = interests
+
+    def calc_plot_values(self):
+        self.const_pi()
+        self.const_p()
+        self.plot_values = yuan([
+            self.const_pi_principals,
+            self.const_pi_interests,
+            self.const_p_principals,
+            self.const_p_interests
+        ])
+        return self.plot_values
+
+    def plot(self):
+        plot_loan = PlotLoan(
+            p_num=self.p_num,
+            values_lists=self.calc_plot_values())
+        return plot_loan.plot()
+
+
+class PlotLoan(BaseModel):
+    p_num: int
+    values_lists: list
 
     def plot(self):
         periods = [p for p in range(1, self.p_num + 1)]
-        self.const_pi()
-        self.const_p()
-        print(self.const_pi_principals)
         line_result = line_plot(
-            periods, [
-                [self.const_pi_principals, '等额本息还款 - 本金曲线'],
-                [self.const_pi_interests, '等额本息还款 - 利息曲线'],
-                [self.const_p_principals, '等额本金还款 - 本金曲线'],
-                [self.const_p_interests, '等额本金还款 - 利息曲线']
+            x=periods,
+            y_values=self.values_lists,
+            y_names=[
+                '等额本息还款 - 本金曲线',
+                '等额本息还款 - 利息曲线',
+                '等额本金还款 - 本金曲线',
+                '等额本金还款 - 利息曲线'
             ]
         )
         layout(line_result)
@@ -91,6 +114,8 @@ class Loan:
 
 
 def yuan(in_cent):
+    if isinstance(in_cent, list):
+        return [yuan(item) for item in in_cent]
     out = round(in_cent / 100, 2)
     return out
 
