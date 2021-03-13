@@ -109,7 +109,6 @@ class PlotLoan(BaseModel):
                 '等额本金还款 - 利息曲线'
             ]
         )
-        layout(line_result)
         return line_result
 
 
@@ -126,4 +125,4 @@ if __name__ == '__main__':
         yearly_interest_rate = 0.2,
         year_limit = 50)
     print(loan.practice_principal_interest)
-    loan.plot()
+    layout(loan.plot())

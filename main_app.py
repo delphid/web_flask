@@ -1,6 +1,8 @@
 from collections import defaultdict
+import json
 import logging
 import secrets
+import time
 
 from flask import Flask, redirect, url_for, request, render_template, g, session
 from jinja2 import Markup, Environment, FileSystemLoader
@@ -14,6 +16,17 @@ CurrentConfig.GLOBAL_ENV = Environment(loader=FileSystemLoader('./templates/pyec
 app = Flask(__name__, static_folder='static')
 app.secret_key = secrets.token_urlsafe()
 logging.basicConfig(level=logging.DEBUG)
+LOG = app.logger
+
+
+def get_flask_request_body(req: request):
+    # when use curl or python request (not when use js):
+    # a flask bug: can't retrive request body from request.json,
+    # but have to do this method. work both for request.form and .values
+    ImmutableMultiDict = req.form
+    body_string = list(ImmutableMultiDict.keys())[0]
+    body = json.loads(body_string)
+    return body
 
 
 @app.route('/user/', defaults={'name': None})
@@ -35,20 +48,18 @@ def user_page(name):
 
 @app.route('/plot/', methods=['POST'])
 def plot():
-    loan_amount_yuan = int(request.form['loan_amount_yuan'])
-    yearly_interest_rate = float(request.form['yearly_interest_rate']) / 100
-    year_limit = int(request.form['year_limit'])
+    LOG.info(request.json)
+    body = request.json
+    loan_amount_yuan = int(body['loan_amount_yuan'])
+    yearly_interest_rate = float(body['yearly_interest_rate']) / 100
+    year_limit = int(body['year_limit'])
     loan = Loan(
         loan_amount_yuan = loan_amount_yuan,
         yearly_interest_rate = yearly_interest_rate,
         year_limit = year_limit)
-    plot_loan = PlotLoan(
-        p_num=loan.p_num,
-        values_lists=loan.calc_plot_values())
-    #app.secret_key = secrets.token_urlsafe()
-    session['plot_loan'] = plot_loan.dict()
-    session['calc_input'] = dict(request.form)
-    return redirect(request.referrer)
+    chart = loan.plot()
+    return chart.dump_options_with_quotes()
+
 
 @app.route('/')
 @app.route('/login/', methods=['POST', 'GET'])

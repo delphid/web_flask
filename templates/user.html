@@ -2,31 +2,57 @@
     <head>
         <meta charset="UTF-8">
         <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+        <script src="https://cdn.bootcss.com/jquery/3.0.0/jquery.min.js"></script>
+        <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
     </head>
     <body>
         <form action="{{ url_for('user_page') }}" method="get">
             <p>Hi {{ g.user_name }}, you've successfully logged in</p>
             <p><input type="submit" name="action" value="return to login page"></p>
         </form>
-        <form action="{{ url_for('plot') }}" method="post">
-            <p>calculate input:</p>
-            <p>
-                <label for="loan_amount_yuan">loan amount</label>
-                <input type="text" name="loan_amount_yuan" value={{ g.calc_input['loan_amount_yuan'] }}>
-                <label for="loan_amount_yuan">yuan</label>
-            </p>
-            <p>
-                <label for="yearly_interest_rate">yearly interest rate</label>
-                <input type="text" name="yearly_interest_rate" value={{ g.calc_input['yearly_interest_rate'] }}>
-                <label for="yearly_interest_rate">%</label>
-            </p>
-            <p>
-                <label for="year_limit">year limit</label>
-                <input type="text" name="year_limit" value={{ g.calc_input['year_limit'] }}>
-                <label for="year_limit">years</label>
-            </p>
-            <p><input type="submit" name="action" value="calculate"></p>
-        </form>
-        <p>{{ g.chart }}</p>
+        <p>calculate input:</p>
+        <p>
+            <label for="loan_amount_yuan">loan amount</label>
+            <input id="loan_amount_yuan" type="text" name="loan_amount_yuan" value={{ g.calc_input['loan_amount_yuan'] }}>
+            <label for="loan_amount_yuan">yuan</label>
+        </p>
+        <p>
+            <label for="yearly_interest_rate">yearly interest rate</label>
+            <input id="yearly_interest_rate" type="text" name="yearly_interest_rate" value={{ g.calc_input['yearly_interest_rate'] }}>
+            <label for="yearly_interest_rate">%</label>
+        </p>
+        <p>
+            <label for="year_limit">year limit</label>
+            <input id="year_limit" type="text" name="year_limit" value={{ g.calc_input['year_limit'] }}>
+            <label for="year_limit">years</label>
+        </p>
+        <p>
+            <button id="calculate">calculate</button>
+        </p>
+        <div id="chart" style="width:1000px; height:600px;"></div>
+        <script>
+            $(
+                function () {$("#calculate").click(function(){
+                    var chart = echarts.init(document.getElementById('chart'), 'white', {renderer: 'canvas'});
+                    var amount = document.getElementById("loan_amount_yuan")["value"];
+                    var ir = document.getElementById("yearly_interest_rate")["value"];
+                    var year = document.getElementById("year_limit")["value"];
+                    var data = {
+                        loan_amount_yuan: amount,
+                        yearly_interest_rate: ir,
+                        year_limit: year
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ url_for('plot') }}",
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        success: function (result) {
+                            chart.setOption(JSON.parse(result));
+                        }
+                    });
+                })}
+            )
+        </script>
     </body>
 </html>
