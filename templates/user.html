@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
     <head>
         <meta charset="UTF-8">
@@ -7,29 +8,31 @@
     </head>
     <body>
         <form action="{{ url_for('user_page') }}" method="get">
-            <p>Hi {{ g.user_name }}, you've successfully logged in</p>
-            <p><input type="submit" name="action" value="return to login page"></p>
+            <a>Welcome! {{ g.user_name }}</a>
+            <a><input type="submit" name="action" value="back to home page" style="width:200px"></a>
         </form>
-        <p>calculate input:</p>
-        <p>
-            <label for="loan_amount_yuan">loan amount</label>
-            <input id="loan_amount_yuan" type="text" name="loan_amount_yuan" value={{ g.calc_input['loan_amount_yuan'] }}>
-            <label for="loan_amount_yuan">yuan</label>
-        </p>
-        <p>
-            <label for="yearly_interest_rate">yearly interest rate</label>
-            <input id="yearly_interest_rate" type="text" name="yearly_interest_rate" value={{ g.calc_input['yearly_interest_rate'] }}>
-            <label for="yearly_interest_rate">%</label>
-        </p>
-        <p>
-            <label for="year_limit">year limit</label>
-            <input id="year_limit" type="text" name="year_limit" value={{ g.calc_input['year_limit'] }}>
-            <label for="year_limit">years</label>
-        </p>
-        <p>
-            <button id="calculate">calculate</button>
-        </p>
-        <div id="chart" style="width:1000px; height:600px;"></div>
+        <div class="row">
+            <div>
+                <p>calculate input:</p>
+                <p>
+                    <label for="loan_amount_yuan">loan amount</label>
+                    <input id="loan_amount_yuan" type="text" name="loan_amount_yuan" value={{ g.calc_input['loan_amount_yuan'] }}>
+                    <label for="loan_amount_yuan">yuan</label>
+                </p>
+                <p>
+                    <label for="yearly_interest_rate">yearly interest rate</label>
+                    <input id="yearly_interest_rate" type="text" name="yearly_interest_rate" value={{ g.calc_input['yearly_interest_rate'] }}>
+                    <label for="yearly_interest_rate">%</label>
+                </p>
+                <p>
+                    <label for="year_limit">year limit</label>
+                    <input id="year_limit" type="text" name="year_limit" value={{ g.calc_input['year_limit'] }}>
+                    <label for="year_limit">years</label>
+                </p>
+                <button id="calculate">calculate</button>
+            </div>
+            <div id="chart" style="width:1000px; height:600px; float:right"></div>
+        </div>
         <script>
             $(
                 function () {$("#calculate").click(function(){

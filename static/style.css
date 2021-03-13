@@ -3,11 +3,28 @@ html {
 }
 
 form {
-    text-align: center;
+    text-align: left;
+}
+
+input {
+    width: 70px;
+}
+
+.row > * {
+    display: inline-block;
+}
+
+.row {
+    overflow: hidden;
 }
 
 p {
     font-size: 30px;
+}
+
+button {
+    font-size: 20px;
+    padding: 10px;
 }
 
 label {
